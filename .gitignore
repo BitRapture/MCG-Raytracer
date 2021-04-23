@@ -1,0 +1,14 @@
+.vs/
+Debug/
+Release/
+MCG_GFX_Framework.sln
+SDKs/
+MCG_GFX_Framework/MCG_GFX_Framework.vcxproj
+MCG_GFX_Framework/MCG_GFX_Framework.vcxproj.filters
+MCG_GFX_Framework/MCG_GFX_Framework.vcxproj.user
+MCG_GFX_Framework/MCG_GFX_Lib.cpp
+MCG_GFX_Framework/MCG_GFX_Lib.h
+MCG_GFX_Framework/MCG_Mandelbrot.h
+MCG_GFX_Framework/MCG_Toolkit.cpp
+MCG_GFX_Framework/MCG_Toolkit.h
+MCG_GFX_Framework/Main.cpp
