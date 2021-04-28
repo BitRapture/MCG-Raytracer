@@ -182,6 +182,76 @@ namespace MRT
 		Primitive(_position),
 		radius{ _radius }
 	{
+		// Precalculate the square of the radius
 		radiusSqr = _radius * _radius;
+	}
+}
+
+// Plane
+namespace MRT
+{
+	float Plane::IntersectPlane(Ray& _ray)
+	{
+		// Get ray origin and direction
+		glm::fvec3 rO = _ray.GetOrigin(), rD = _ray.GetDirection();
+
+		// Set the ray length to 0 by default; no intersection
+		float mL = 0;
+		// Calculate the dot product from the ray direction and plane direction
+		// Used as the denominator for solving mL
+		float d = glm::dot(rD, direction);
+
+		// If ray and plane are parallel it will most likely not be 0, a tiny value is compared against
+		// to check for an intersection
+		if (d > (float)1e-6)
+		{
+			// Subtract the ray position from the plane position
+			glm::fvec3 rOpos = position - rO;
+			// The direction (which is a normal) is then dot multiplied with the result
+			// and divided by the denominator value to solve the ray length
+			mL = glm::dot(rOpos, direction) / d;
+		}
+
+		// If an intersection occurred, the ray length will be greater than 0
+		return mL;
+	}
+
+	Plane::Plane(glm::fvec3& _position, glm::fvec3& _direction)
+		:
+		Primitive(_position), 
+		direction(_direction)
+	{
+		// Normalise the direction vector just in case
+		glm::normalize(direction);
+	}
+}
+
+// Circle
+namespace MRT
+{
+	bool Circle::Intersect(Ray& _ray)
+	{
+		// Get the ray length by checking the entire plane for an intersection
+		float mL = IntersectPlane(_ray);
+		// If length is 0, theres no intersection
+		if (mL == 0) return false;
+
+		// Get ray hit position
+		glm::fvec3 rH = _ray.GetOrigin() + (_ray.GetDirection() * mL);
+		// Get the length of the hit position to the circle center
+		glm::fvec3 c = rH - position;
+
+		// Get the dot product and see if the ray is projected inside the circle radius
+		// keeping it squared saves performance (dont need to sqrt the dot product)
+		return (glm::dot(c, c) <= radiusSqr);
+	}
+
+	Circle::Circle(glm::fvec3 _position, glm::fvec3 _direction, float _radius)
+		:
+		Plane(_position, _direction),
+		radius{ _radius }
+	{
+		// Precalculate the square of the radius
+		radiusSqr = radius * radius;
 	}
 }

@@ -114,6 +114,9 @@ namespace MRT
 		glm::fvec3 position;
 
 	public:
+		// Pure virtual intersection function for primitives to override
+		// @param _ray : The ray to check for an intersection
+		// @returns bool : true if intersecting
 		virtual bool Intersect(Ray& _ray) = 0;
 
 		Primitive(glm::fvec3& _position);
@@ -128,9 +131,62 @@ namespace MRT
 		float radius{ 0 }, radiusSqr{ 0 };
 
 	public:
+		// Check if ray intersects sphere
+		// Uses the geometric solution to calculate intersection
+		// @param _ray : The ray to check for an intersection
+		// @returns bool : true if intersecting
 		bool Intersect(Ray& _ray) override;
 
 		Sphere(glm::fvec3 _position, float _radius);
+	};
+
+	// Plane
+	// - Extends Primitive
+	// - Used for creating planes, can be extended further
+	// - Parent class for primitive shapes e.g triangles, circles
+	// - Can not be instantiated (Intersect isnt overridden)
+	class Plane : public Primitive
+	{
+	protected:
+		glm::fvec3 direction;
+
+	protected:
+		// Check if ray intersects plane
+		// Uses the algebraic form of a plane to calculate intersection
+		// @param _ray : The ray to check for an intersection
+		// @returns float : The ray length, if (> 0) intersection occurred
+		float IntersectPlane(Ray& _ray);
+
+	public:
+		Plane(glm::fvec3& _position, glm::fvec3& _direction);
+	};
+
+	// Circle
+	// - Extends Plane
+	// - Used for creating 2D circles in a 3D environment
+	class Circle : public Plane
+	{
+	private:
+		float radius{ 0 }, radiusSqr{ 0 };
+
+	public:
+		// Check if ray intersects circle
+		// Uses the algebraic form of a plane to calculate intersection
+		// @param _ray : The ray to check for an intersection
+		// @returns float : The ray length, if (> 0) intersection occurred
+		bool Intersect(Ray& _ray) override;
+
+		Circle(glm::fvec3 _position, glm::fvec3 _direction, float _radius);
+	};
+
+	// The Raytracer
+	// - An all encompassing class that simplifies the raytracing process
+	// - Contains Primitive managing system
+	// - Contains Camera
+	// - Contains adjustable parameters to tweak simulation
+	class RayTracer
+	{
+
 	};
 };
 
@@ -142,3 +198,5 @@ namespace MRT
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/computing-pixel-coordinates-of-3d-point/mathematics-computing-2d-coordinates-of-3d-points
 // https://github.com/g-truc/glm/blob/master/manual.md#section1
 // https://cs.stanford.edu/people/eroberts/courses/soco/projects/1997-98/ray-tracing/implementation.html#intro
+// https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+// https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
