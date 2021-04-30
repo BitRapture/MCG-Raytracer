@@ -1,7 +1,5 @@
 #include "MCG_Raytracing.h"
 
-#include <iostream>
-
 // Ray
 namespace MRT
 {
@@ -394,8 +392,6 @@ namespace MRT
 
 				camera.DisplayPlanePixel(x, y);
 			}
-			if (y % 10 == 0)
-				if (!MCG::ProcessFrame()) return;
 		}
 	}
 
@@ -431,9 +427,84 @@ namespace MRT
 // Scene Manager
 namespace MRT
 {
+	void SceneManager::FillInstructionList()
+	{
+		instructions = new std::string[]{
+			"exit", "help", "render", "clear", 
+			"move", "rotate", "lookat", "circle",
+			"sphere"
+		};
+	}
+
 	void SceneManager::Run()
 	{
+		while (MCG::ProcessFrame())
+		{
+			// Declare user input and arguments
+			std::string input, arg;
+			// Get user input
+			std::getline(std::cin, input);
 
+
+			// TODO TODO TDODO
+			// Finalise this system, change the for loops to:
+			// Calculate whitespace + \n
+			// Create dynamic array of arguments, split input up into them,
+			// Parse this arguments pointer to the internal methods
+
+
+			// Go through input 
+			for (int i = 0; i < input.size(); ++i)
+			{
+				// Check argument
+				if (input[i] <= 0x20 && arg.size() > 0 ||
+					i + 1 == input.size())
+				{
+					if (i + 1 == input.size()) arg += input[i];
+
+					// Go through instruction list
+					for (std::string::iterator inst = instructions->begin();
+						inst != instructions->end(); ++inst)
+					{
+						// If user selected an instruction, run it
+						if (arg.compare(&(*inst)) == 0)
+						{
+							switch (inst - instructions->begin())
+							{
+								// Exit application
+							case 0: { return;  break; }
+								  // Display help
+							case 1: {  break; }
+								  // Render scene
+							case 2: {  break; }
+								  // Clear scene
+							case 3: {  break; }
+								  // Move camera
+							case 4: {  break; }
+								  // Rotate camera
+							case 5: {  break; }
+								  // Set camera target
+							case 6: {  break; }
+								  // Add circle to scene
+							case 7: {  break; }
+								  // Add sphere to scene 
+							case 8: {  break; }
+							}
+							// Break out of instruction list, onto next argument
+							break;
+						}
+					}
+
+					std::cout << arg << std::endl;
+
+					// Clear the argument, skip the whitespace
+					arg.clear();
+					continue;
+				}
+				// Add character to argument string
+				arg += input[i];
+			}
+		}
 	}
 
 	SceneManager::SceneManager(RayTracer* _raytracer)
@@ -442,5 +513,9 @@ namespace MRT
 	{
 		// Double check that the raytracer is already instantiated
 		fInitialised = (raytracer != nullptr ? raytracer->IsInit() : false);
+
+		// Fill instruction list and make sure its been allocated
+		FillInstructionList();
+		fInitialised &= (instructions != nullptr);
 	}
 }

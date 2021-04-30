@@ -3,6 +3,9 @@
 
 #include "MCG_GFX_Lib.h"
 
+#include <iostream>
+#include <string>
+
 namespace MRT
 {
 	// Declaring all data structures
@@ -363,9 +366,18 @@ namespace MRT
 		// allows for modifying before instantiation of scene system
 		RayTracer* raytracer{ nullptr };
 
+		// Instruction list
+		// Things the user can do to the scene/raytracer
+		std::string* instructions;
+
 		// SceneManager flags
 		// Check system is completely initialised
 		bool fInitialised{ false };
+
+	// Internal methods
+	private:
+		// Add all instructions to the instruction list
+		void FillInstructionList();
 
 	public:
 
