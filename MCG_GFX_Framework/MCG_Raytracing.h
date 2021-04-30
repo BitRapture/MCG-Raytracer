@@ -5,7 +5,17 @@
 
 namespace MRT
 {
+	// Declaring all data structures
+	struct ColorPixel;
+	struct HitInformation;
+	class Ray;
+	class Camera;
 	class Primitive;
+	class Sphere;
+	class Plane;
+	class Circle;
+	class RayTracer;
+	class ObjectCreator;
 
 	// ColorPixel
 	// - A simple structure containing 3 floats for RGB color
@@ -90,16 +100,24 @@ namespace MRT
 		ColorPixel* imagePlane{ nullptr };
 
 		// Image aspect ratios
-		float imageAspectX{ 1.f }, imageAspectY{ 1.f };
+		float imageAspectX{ 1.0f }, imageAspectY{ 1.0f };
 		// Image dimensions
 		int imageWidth{ 0 }, imageHeight{ 0 };
 
 		// Field of view (default ~60 degrees)
 		float fov{ 0.57f };
 
+		// Max viewing render distance (default 10000)
+		float maxViewingDistance{ 10000.0f };
+
 		// Camera matrix (used for rotation & translation)
 		// Converts camera to world space
 		glm::fmat4 camToWorld;
+		// Rotation matrix 
+		glm::fmat4 camRotation;
+
+		// Construct camToWorld matrix
+		void ConstructCamMatrix();
 
 		// Camera position
 		glm::fvec3 position;
@@ -136,6 +154,23 @@ namespace MRT
 		// Set FOV
 		// @param _angleDeg : An angle in degrees (0 to PI)
 		void SetFOV(float _angleDeg);
+
+		// Set camera position in world
+		// @param _position : The new position of the camera
+		void SetPosition(glm::fvec3 _position);
+
+		// Set max render distance
+		// @param _distance : The new distance
+		void SetRenderDistance(float _distance) { maxViewingDistance = _distance; }
+
+		// Rotate camera
+		// @param _axis : The axis to apply the rotation around
+		// @param _angle : The angle to be applied (degrees)
+		void SetRotation(glm::fvec3 _axis, float _angle);
+
+		// Look at point
+		// @param _point : The position vector to look at
+		void LookAt(glm::fvec3 _point);
 
 		// Check camera is initialised
 		// @returns bool : true when successfully initialised
@@ -284,15 +319,62 @@ namespace MRT
 		// @param _color : RGB normalised color value
 		void SetBackgroundColor(ColorPixel _color);
 
+		// Set camera position in world using its method
+		// @param _position : The new position of the camera
+		void SetCameraPosition(glm::fvec3 _position) { camera.SetPosition(_position); }
+
+		// Rotate camera using its method
+		// @param _axis : The axis to apply the rotation around
+		// @param _angle : The angle to be applied (degrees)
+		void SetCameraRotation(glm::fvec3 _axis, float _angle) { camera.SetRotation(_axis, _angle);  }
+
+		// Set camera to look at a point using its method
+		// @param _point : The position vector to look at
+		void SetCameraTarget(glm::fvec3 _point) { camera.LookAt(_point); }
+
+		// Set the max viewing render distance of the camera using its method
+		// @param _distance : The new distance
+		void SetCameraRenderDistance(float _distance) { camera.SetRenderDistance(_distance); }
+
 		// Add a Primitive object to the scene
 		// @param _object : The object to add to the scene (needs to be created from new)
 		void AddPrimitive(Primitive* _object);
 
 		// Raytrace the entire scene
 		void RenderScene();
-
+		
+		// Instantiation
+		// @param _screenWidth : The window screen width
+		// @param _screenHeight : The window screen height
 		RayTracer(int _screenWidth, int _screenHeight);
 		~RayTracer();
+	};
+
+	// Scene Manager
+	// - Allows for custom scenes to be created
+	// - Lets users change parameters and add/remove objects
+	// - Contains pointer to RayTracer system
+	// - Uses <iostream> to query user input
+	// (TODO): Add filesystem to read scene instructions from file
+	class SceneManager
+	{
+	private:
+		// Pointing to an already instantiated raytracer system
+		// allows for modifying before instantiation of scene system
+		RayTracer* raytracer{ nullptr };
+
+		// SceneManager flags
+		// Check system is completely initialised
+		bool fInitialised{ false };
+
+	public:
+
+		// Run the scene manager and poll user input through iostream
+		void Run();
+
+		// Instantiation
+		// @param _raytracer : Pointer to raytracing system
+		SceneManager(RayTracer* _raytracer);
 	};
 };
 
@@ -306,3 +388,5 @@ namespace MRT
 // https://cs.stanford.edu/people/eroberts/courses/soco/projects/1997-98/ray-tracing/implementation.html#intro
 // https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
+// https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/geometry/geo-tran.html
+// https://www.3dgep.com/understanding-the-view-matrix/

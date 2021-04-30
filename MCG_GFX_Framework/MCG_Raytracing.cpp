@@ -20,6 +20,11 @@ namespace MRT
 // Raytracing camera
 namespace MRT
 {
+	void Camera::ConstructCamMatrix()
+	{
+		camToWorld = glm::translate(glm::fmat4(1.0f), position) * camRotation * glm::fmat4(1.0f);
+	}
+
 	bool Camera::DrawToPlane(const int& _x, const int& _y, ColorPixel _color)
 	{
 		// Check pixel coord is in bounds on plane
@@ -84,6 +89,9 @@ namespace MRT
 		// Multiply with camToWorld, transforms origin
 		rO = camToWorld * rO;
 
+		// Set ray length to the max viewing distance
+		_ray.hitInfo.length = maxViewingDistance;
+
 		// Set origin to transformed rO (excluding w)
 		_ray.origin = glm::fvec3(rO.x, rO.y, rO.z);
 		// Subtract rays origin from the world space pixel coord
@@ -100,10 +108,32 @@ namespace MRT
 		fov = glm::tan(glm::radians(_angleDeg) / 2);
 	}
 
+	void Camera::SetPosition(glm::fvec3 _position)
+	{
+		// Set the new position and then construct the new matrix
+		position = _position;
+		ConstructCamMatrix();
+	}
+
+	void Camera::SetRotation(glm::fvec3 _axis, float _angle)
+	{
+		// Set the new rotation and then construct the new matrix
+		camRotation = glm::rotate(glm::fmat4(1.0f), glm::radians(_angle), _axis);
+		ConstructCamMatrix();
+	}
+
+	void Camera::LookAt(glm::fvec3 _point)
+	{
+		// Get the inverse of the view matrix which gives the rotation
+		camRotation = glm::inverse(glm::lookAt(position, _point, glm::fvec3(0, 1, 0)));
+		ConstructCamMatrix();
+	}
+
+
 	Camera::Camera(const int& _pixelWidth, const int& _pixelHeight)
 		:
 		// Set cam matrix to an identity
-		camToWorld(1.0f),
+		camToWorld(1.0f), camRotation(1.0f),
 		position(0, 0, 0),
 		imageWidth{ _pixelWidth }, imageHeight{ _pixelHeight }
 	{
@@ -176,8 +206,11 @@ namespace MRT
 			if (iEnd < 0) return false;
 		}
 
-		HitInformation hitInfo{ intersect, glm::normalize((rO + rD * intersect) - position), color };
+		// Check if intersect length is greater than current ray length
+		if (_ray.GetLength() < intersect) return false;
 
+		// Send hit information to the ray
+		HitInformation hitInfo{ intersect, glm::normalize((rO + rD * intersect) - position), color };
 		_ray.SetHitInfo(hitInfo);
 
 		return true;
@@ -242,6 +275,9 @@ namespace MRT
 		// If length is 0, theres no intersection
 		if (mL == 0) return false;
 
+		// Check if intersect length is greater than current ray length
+		if (_ray.GetLength() < mL) return false;
+
 		// Get ray hit position
 		glm::fvec3 rH = _ray.GetOrigin() + (_ray.GetDirection() * mL);
 		// Get the length of the hit position to the circle center
@@ -249,7 +285,13 @@ namespace MRT
 
 		// Get the dot product and see if the ray is projected inside the circle radius
 		// keeping it squared saves performance (dont need to sqrt the dot product)
-		return (glm::dot(c, c) <= radiusSqr);
+		if (glm::dot(c, c) > radiusSqr) return false;
+
+		// Send hit information to the ray
+		HitInformation hitInfo{ mL, glm::normalize(direction * rH), color };
+		_ray.SetHitInfo(hitInfo);
+
+		return true;
 	}
 
 	Circle::Circle(glm::fvec3 _position, glm::fvec3 _direction, float _radius, ColorPixel _color)
@@ -271,7 +313,7 @@ namespace MRT
 		HitInformation hitInfo = _ray.GetHitInfo();
 		// Calculate the facing ratio by getting the dot product of the hitnormal and viewing direction (-rayDir)
 		// having it clamped to 0 lets the final ratio be between 0 and 1.0f
-		float facingRatio = glm::max(0.0f, glm::dot(hitInfo.hitNormal, -_ray.GetDirection()));
+		float facingRatio = glm::max(0.05f, glm::dot(hitInfo.hitNormal, -_ray.GetDirection()));
 
 		return { facingRatio * hitInfo.hitColor.r, facingRatio * hitInfo.hitColor.g, facingRatio * hitInfo.hitColor.b };
 	}
@@ -383,5 +425,22 @@ namespace MRT
 		// Delete the primitive manager
 		delete[] primiManager;
 		delete[] primiMap;
+	}
+}
+
+// Scene Manager
+namespace MRT
+{
+	void SceneManager::Run()
+	{
+
+	}
+
+	SceneManager::SceneManager(RayTracer* _raytracer)
+		:
+		raytracer{ _raytracer }
+	{
+		// Double check that the raytracer is already instantiated
+		fInitialised = (raytracer != nullptr ? raytracer->IsInit() : false);
 	}
 }
