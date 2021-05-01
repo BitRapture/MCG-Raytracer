@@ -335,6 +335,10 @@ namespace MRT
 		// @param _point : The position vector to look at
 		void SetCameraTarget(glm::fvec3 _point) { camera.LookAt(_point); }
 
+		// Set camera FOV
+		// @param _fov : The new fov (degrees)
+		void SetCameraFOV(float _fov) { camera.SetFOV(_fov); }
+
 		// Set the max viewing render distance of the camera using its method
 		// @param _distance : The new distance
 		void SetCameraRenderDistance(float _distance) { camera.SetRenderDistance(_distance); }
@@ -342,6 +346,9 @@ namespace MRT
 		// Add a Primitive object to the scene
 		// @param _object : The object to add to the scene (needs to be created from new)
 		void AddPrimitive(Primitive* _object);
+
+		// Delete all primitives from the manager
+		void ClearPrimitives();
 
 		// Raytrace the entire scene
 		void RenderScene();
@@ -369,6 +376,8 @@ namespace MRT
 		// Instruction list
 		// Things the user can do to the scene/raytracer
 		std::string* instructions;
+		// Instructions set (the size of the instructions array)
+		int instructionSet{ 0 };
 
 		// SceneManager flags
 		// Check system is completely initialised
@@ -378,6 +387,31 @@ namespace MRT
 	private:
 		// Add all instructions to the instruction list
 		void FillInstructionList();
+
+		// Instructions
+		// These all have the same parameters unless specified
+		// @param _argv : The argument array parsed down
+		// @param _argc : The amount of arguments inside the array
+		// @returns bool : If the instruction successfully run
+		// -------------------------------------------------------
+		// Renders the scene
+		void InstRender();
+		// Clear the scene
+		void InstClear();
+		// Set the scene background color
+		bool InstColor(std::string* _argv, int& _argc);
+		// Move the raytracing camera
+		bool InstMove(std::string* _argv, int& _argc);
+		// Rotate the raytracing camera around axis
+		bool InstRotate(std::string* _argv, int& _argc);
+		// Set raytracing camera to look at target
+		bool InstLookat(std::string* _argv, int& _argc);
+		// Change field of view of raytracing camera
+		bool InstFOV(std::string* _argv, int& _argc);
+		// Add a circle to the scene
+		bool InstCircle(std::string* _argv, int& _argc);
+		// Add a sphere to the scene
+		bool InstSphere(std::string* _argv, int& _argc);
 
 	public:
 
