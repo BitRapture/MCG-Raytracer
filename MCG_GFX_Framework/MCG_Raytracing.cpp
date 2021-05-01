@@ -130,9 +130,9 @@ namespace MRT
 		if (circle == nullptr) return false;
 
 		raytracer->AddPrimitive(circle);
-		std::cout << "Added circle to scene at position: " << "{" << x << ", " << y << ", " << z << "}.\n With a radius set to: " <<
-			radius << ".\n Facing direction: " << "{" << x << ", " << y << ", " << z <<
-			"}.\n And a color set to: " << "{" << r << ", " << g << ", " << b << "}.\n" << std::endl;
+		std::cout << "Added circle to scene at position: " << "{" << x << ", " << y << ", " << z << "}.\nWith a radius set to: " <<
+			radius << ".\nFacing direction: " << "{" << x << ", " << y << ", " << z <<
+			"}.\nAnd a color set to: " << "{" << r << ", " << g << ", " << b << "}.\n" << std::endl;
 		return true;
 	}
 
@@ -149,8 +149,8 @@ namespace MRT
 		if (sphere == nullptr) return false;
 
 		raytracer->AddPrimitive(sphere);
-		std::cout << "Added sphere to scene at position: " << "{" << x << ", " << y << ", " << z << "}.\n With a radius set to: " <<
-			radius << ".\n And a color set to: " << "{" << r << ", " << g << ", " << b << "}.\n" << std::endl;
+		std::cout << "Added sphere to scene at position: " << "{" << x << ", " << y << ", " << z << "}.\nWith a radius set to: " <<
+			radius << ".\nAnd a color set to: " << "{" << r << ", " << g << ", " << b << "}.\n" << std::endl;
 		return true;
 	}
 
