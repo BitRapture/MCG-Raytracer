@@ -95,12 +95,21 @@ namespace MRT
 #endif // !_MCG_RAYTRACING_H_
 
 
-// Sources:
-// https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays
-// https://www.scratchapixel.com/lessons/3d-basic-rendering/computing-pixel-coordinates-of-3d-point/mathematics-computing-2d-coordinates-of-3d-points
-// https://github.com/g-truc/glm/blob/master/manual.md#section1
-// https://cs.stanford.edu/people/eroberts/courses/soco/projects/1997-98/ray-tracing/implementation.html#intro
-// https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
-// https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
-// https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/geometry/geo-tran.html
-// https://www.3dgep.com/understanding-the-view-matrix/
+// All sources used in this project:
+/*
+	Jeremiah (2011). Understanding the View Matrix - 3D Game Engine Programming. [online] 3D Game Engine Programming. Available at: https://www.3dgep.com/understanding-the-view-matrix/ [Accessed 29 Apr. 2021].
+
+	Lu, C., Roetter, A. and Schultz, A. (1997). Ray Tracing Implementation. [online] cs.stanford.edu. Available at: https://cs.stanford.edu/people/eroberts/courses/soco/projects/1997-98/ray-tracing/implementation.html#intro [Accessed 28 Apr. 2021].
+
+	Scratchapixel (n.d.). A Minimal Ray-Tracer: Rendering Simple Shapes (Sphere, Cube, Disk, Plane, etc.) (Ray-Plane and Ray-Disk Intersection). [online] www.scratchapixel.com. Available at: https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection [Accessed 28 Apr. 2021].
+
+	Scratchapixel (n.d.). Computing the Pixel Coordinates of a 3D Point (Mathematics of Computing the 2D Coordinates of a 3D Point). [online] www.scratchapixel.com. Available at: https://www.scratchapixel.com/lessons/3d-basic-rendering/computing-pixel-coordinates-of-3d-point/mathematics-computing-2d-coordinates-of-3d-points [Accessed 28 Apr. 2021].
+
+	Scratchapixel (n.d.). Ray-Tracing: Generating Camera Rays (Generating Camera Rays). [online] www.scratchapixel.com. Available at: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays [Accessed 28 Apr. 2021].
+
+	Shene, C.-K. (2011). Geometric Transformations. [online] pages.mtu.edu. Available at: https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/geometry/geo-tran.html [Accessed 29 Apr. 2021].
+
+	Wikipedia Contributors (2018). Line (geometry). [online] Wikipedia. Available at: https://en.wikipedia.org/wiki/Line_(geometry) [Accessed 28 Apr. 2021].
+
+	Wikipedia Contributors (2021). Line–plane intersection. [online] Wikipedia. Available at: https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection [Accessed 28 Apr. 2021].
+*/
